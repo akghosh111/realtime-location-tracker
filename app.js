@@ -1,22 +1,34 @@
-const express = require("express")
-const app = express()
+const express = require("express");
 const http = require("http");
 const path = require("path");
-const port = 3000
+
+
+const app = express();
 
 const socketio = require("socket.io");
 
 const server = http.createServer(app);
 
-const io = socketio(server);
 
-app.set("view engine", "ejs");
-app.set(express.static(path.join(__dirname, "public")));
 
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+const io = socketio(server, {
+    allowEIO3: true // Enable support for Engine.IO v3 clients
 });
 
-server.listen(port);
+
+
+app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, 'public')));
+
+//app.use(express.json());
+
+io.on("connection", function(socket){
+    console.log("connected");
+
+});
+
+app.get('/', (req, res) => {
+  res.render("index");
+});
+
+server.listen(3000);
